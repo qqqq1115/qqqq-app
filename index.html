@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="锵锵锵锵的小世界">
+    <meta name="theme-color" content="#FDF8F6">
+    <title>锵锵锵锵的小世界</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FDF8F6;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EFED;
+            --bg-warm: #FAF0ED;
+            --text-primary: #4A3F3F;
+            --text-secondary: #7A6B6B;
+            --text-tertiary: #A89999;
+            --accent: #C4908F;
+            --accent-light: #F8EEED;
+            --accent-soft: #E8C5C4;
+            --accent-deep: #B07472;
+            --success: #7DB59A;
+            --success-light: #E8F4ED;
+            --warning: #D4A574;
+            --warning-light: #FDF4EB;
+            --danger: #C97B7B;
+            --danger-light: #FCEAEA;
+            --gold: #C9A962;
+            --border: #EDE5E3;
+            --shadow-sm: 0 1px 3px rgba(74,63,63,0.04);
+            --shadow-md: 0 4px 12px rgba(74,63,63,0.06);
+            --shadow-lg: 0 8px 24px rgba(74,63,63,0.08);
+            --radius-sm: 10px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-full: 9999px;
+            --font-serif: 'Noto Serif SC', serif;
+            --font-sans: 'Noto Sans SC', -apple-system, sans-serif;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1C1917;
+            --bg-secondary: #292524;
+            --bg-tertiary: #3D3835;
+            --bg-warm: #2D2624;
+            --text-primary: #F5F0EE;
+            --text-secondary: #B8A9A6;
+            --text-tertiary: #8A7B78;
+            --accent: #D4A5A4;
+            --accent-light: #3D2F2E;
+            --accent-soft: #5C4544;
+            --accent-deep: #E8B8B7;
+            --success: #8FC9A8;
+            --success-light: #2D3D34;
+            --warning: #E0B88A;
+            --warning-light: #3D352A;
+            --danger: #D99B9B;
+            --danger-light: #3D2A2A;
+            --gold: #D9BC7A;
+            --border: #3D3835;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            padding-top: calc(14px + env(safe-area-inset-top));
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        .logo-text {
+            font-family: var(--font-serif);
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle {
+            width: 38px;
+            height: 38px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 16px 20px;
+            padding-bottom: 100px;
+            opacity: 0;
+            transform: translateY(8px);
+            pointer-events: none;
+            transition: all 0.25s ease;
+        }
+
+        .page.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Priority Task Card - The Main Focus */
+        .priority-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-warm) 100%);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .priority-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent-deep);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .priority-task-text {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .priority-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .priority-meta .urgent {
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        .priority-status {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* Encouragement Message */
+        .encouragement {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .encouragement-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .encouragement-text strong {
+            color: var(--accent-deep);
+        }
+
+        /* Reminder Banner */
+        .reminder-banner {
+            background: linear-gradient(135deg, var(--warning-light) 0%, var(--accent-light) 100%);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .reminder-banner.active {
+            display: block;
+            animation: gentlePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        .reminder-text {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            letter-spacing: 0.5px;
+        }
+
+        .section-count {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            background: var(--bg-tertiary);
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
+        }
+
+        /* Task List */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .task-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .task-card.completed {
+            opacity: 0.6;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .task-checkbox:hover {
+            border-color: var(--accent);
+        }
+
+        .task-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        .task-card.completed .task-text {
+            text-decoration: line-through;
+            color: var(--text-tertiary);
+        }
+
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .task-time {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .task-time.urgent {
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        .task-time.soon {
+            color: var(--warning);
+        }
+
+        .task-rank {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            background: var(--accent-light);
+            color: var(--accent-deep);
+        }
+
+        .task-delete {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .task-card:hover .task-delete {
+            opacity: 1;
+        }
+
+        .task-delete:hover {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Tabs for History */
+        .task-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-tertiary);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+        }
+
+        .task-tab {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .task-tab.active {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Chat Input Area */
+        .chat-input-area {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 12px 16px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 8px 12px;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input-wrapper:focus-within {
+            box-shadow: 0 0 0 2px var(--accent-soft);
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-family: var(--font-sans);
+            font-size: 15px;
+            color: var(--text-primary);
+            resize: none;
+            max-height: 100px;
+            min-height: 22px;
+            line-height: 1.5;
+            outline: none;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .send-btn {
+            width: 34px;
+            height: 34px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Snippet Page */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            margin-bottom: 12px;
+        }
+
+        .search-box svg {
+            color: var(--text-tertiary);
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .snippet-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .category-btn {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-radius: var(--radius-full);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .category-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .snippet-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .snippet-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+        }
+
+        .snippet-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .snippet-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .snippet-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .snippet-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .snippet-btn.copy-btn:hover {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .snippet-btn.delete-btn:hover {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .snippet-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 60px;
+            overflow: hidden;
+        }
+
+        .snippet-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .snippet-tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            background: var(--accent-light);
+            color: var(--accent-deep);
+            border-radius: var(--radius-full);
+        }
+
+        /* Settings */
+        .settings-section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-icon {
+            width: 34px;
+            height: 34px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .settings-text h4 {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .settings-text p {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+
+        .toggle {
+            width: 46px;
+            height: 26px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active {
+            background: var(--accent);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: var(--radius-full);
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle.active::after {
+            left: 23px;
+        }
+
+        .export-btn {
+            padding: 8px 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            display: flex;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 10px 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-tertiary);
+            font-family: var(--font-sans);
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(74,63,63,0.4);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            width: 100%;
+            max-width: 480px;
+            max-height: 85vh;
+            padding: 20px;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .priority-select {
+            display: flex;
+            gap: 8px;
+        }
+
+        .priority-option {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-primary);
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .priority-option.selected {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            color: var(--accent-deep);
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Progress Dialog */
+        .progress-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(74,63,63,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            padding: 20px;
+        }
+
+        .progress-dialog.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .progress-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+        }
+
+        .progress-dialog.active .progress-card {
+            transform: scale(1);
+        }
+
+        .progress-emoji {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .progress-question {
+            font-family: var(--font-serif);
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .progress-task-name {
+            font-size: 14px;
+            color: var(--accent-deep);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .progress-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .progress-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .progress-btn.no {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .progress-btn.yes {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Feedback Message */
+        .feedback-message {
+            background: var(--success-light);
+            border: 1px solid var(--success);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .feedback-message.active {
+            display: block;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .feedback-message.gentle {
+            background: var(--warning-light);
+            border-color: var(--warning);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Add Button */
+        .add-btn {
+            position: fixed;
+            bottom: calc(85px + env(safe-area-inset-bottom));
+            right: 20px;
+            width: 52px;
+            height: 52px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .add-btn.visible {
+            display: flex;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: calc(20px + env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 12px 20px;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            z-index: 2000;
+            transition: transform 0.3s ease;
+        }
+
+        .toast.active {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Recognition Popup */
+        .recognition-popup {
+            position: fixed;
+            bottom: 130px;
+            left: 20px;
+            right: 20px;
+            max-width: 440px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 500;
+        }
+
+        .recognition-popup.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .recognition-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .recognition-text strong {
+            color: var(--accent-deep);
+        }
+
+        .recognition-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .recognition-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .recognition-btn.secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .recognition-btn.primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Reminder Sync Modal */
+        .reminder-intro {
+            background: var(--bg-warm);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+        }
+
+        .reminder-intro p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .reminder-schedule {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .reminder-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .reminder-item:last-child {
+            border-bottom: none;
+        }
+
+        .reminder-date {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent-deep);
+            min-width: 90px;
+        }
+
+        .reminder-times {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .reminder-text-preview {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-primary);
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .reminder-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .reminder-skip {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            color: var(--text-tertiary);
+            cursor: pointer;
+        }
+
+        .reminder-tip {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 12px 14px;
+            background: var(--success-light);
+            border: 1px solid var(--success);
+            border-radius: var(--radius-md);
+            animation: gentlePulse 2s ease-in-out infinite;
+        }
+
+        .reminder-tip.active {
+            display: flex;
+        }
+
+        .reminder-tip .tip-icon {
+            font-size: 18px;
+        }
+
+        .reminder-tip span {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">✨</div>
+                <span class="logo-text">锵锵锵锵的小世界</span>
+            </div>
+            <button class="theme-toggle" id="themeToggle">☀️</button>
+        </header>
+
+        <main class="main-content">
+            <!-- Tasks Page -->
+            <div class="page active" id="tasksPage">
+                <!-- Priority Task -->
+                <div class="priority-card" id="priorityCard" style="display: none;">
+                    <div class="priority-label">🎯 现在最该做的</div>
+                    <div class="priority-task-text" id="priorityTaskText"></div>
+                    <div class="priority-meta" id="priorityMeta"></div>
+                    <div class="priority-status" id="priorityStatus"></div>
+                </div>
+
+                <!-- Feedback Message -->
+                <div class="feedback-message" id="feedbackMessage">
+                    <p class="feedback-text" id="feedbackText"></p>
+                </div>
+
+                <!-- Reminder Banner -->
+                <div class="reminder-banner" id="reminderBanner">
+                    <p class="reminder-text" id="reminderText"></p>
+                </div>
+
+                <!-- Encouragement (when no priority task) -->
+                <div class="encouragement" id="encouragement">
+                    <p class="encouragement-text" id="encouragementText"></p>
+                </div>
+
+                <!-- Task Tabs -->
+                <div class="task-tabs">
+                    <button class="task-tab active" data-tab="pending">待完成</button>
+                    <button class="task-tab" data-tab="completed">已完成</button>
+                </div>
+
+                <!-- Pending Tasks -->
+                <div id="pendingSection">
+                    <div class="section-header">
+                        <span class="section-title">任务列表</span>
+                        <span class="section-count" id="pendingCount">0</span>
+                    </div>
+                    <div class="task-list" id="pendingTaskList"></div>
+                    <div class="empty-state" id="emptyPending" style="display: none;">
+                        <div class="empty-icon">🌸</div>
+                        <p class="empty-text">没有待办任务~<br>在下方输入框随手记录吧</p>
+                    </div>
+                </div>
+
+                <!-- Completed Tasks -->
+                <div id="completedSection" style="display: none;">
+                    <div class="section-header">
+                        <span class="section-title">已完成</span>
+                        <span class="section-count" id="completedCount">0</span>
+                    </div>
+                    <div class="task-list" id="completedTaskList"></div>
+                    <div class="empty-state" id="emptyCompleted" style="display: none;">
+                        <div class="empty-icon">📝</div>
+                        <p class="empty-text">还没有完成的任务~<br>完成后会在这里保留记录</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Snippets Page -->
+            <div class="page" id="snippetsPage">
+                <div class="search-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" class="search-input" id="snippetSearch" placeholder="搜索片段...">
+                </div>
+
+                <div class="snippet-categories" id="categories">
+                    <button class="category-btn active" data-category="all">全部</button>
+                    <button class="category-btn" data-category="academic">📚 学术</button>
+                    <button class="category-btn" data-category="ai">🤖 AI指令</button>
+                    <button class="category-btn" data-category="account">🔐 账号</button>
+                    <button class="category-btn" data-category="template">📋 模板</button>
+                    <button class="category-btn" data-category="other">💬 其他</button>
+                </div>
+
+                <div class="snippet-list" id="snippetList"></div>
+                <div class="empty-state" id="emptySnippets" style="display: none;">
+                    <div class="empty-icon">📌</div>
+                    <p class="empty-text">还没有片段~<br>点击右下角添加常用内容</p>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page" id="settingsPage">
+                <div class="section-title" style="margin-bottom: 12px;">外观</div>
+                <div class="settings-section">
+                    <div class="settings-item">
+                        <div class="settings-label">
+                            <div class="settings-icon">🌙</div>
+                            <div class="settings-text">
+                                <h4>深色模式</h4>
+                                <p>夜间使用更护眼</p>
+                            </div>
+                        </div>
+                        <div class="toggle" id="darkModeToggle"></div>
+                    </div>
+                </div>
+
+                <div class="section-title" style="margin-bottom: 12px;">数据</div>
+                <div class="settings-section">
+                    <div class="settings-item">
+                        <div class="settings-label">
+                            <div class="settings-icon">📤</div>
+                            <div class="settings-text">
+                                <h4>导出备份</h4>
+                                <p>保存任务和片段</p>
+                            </div>
+                        </div>
+                        <button class="export-btn" id="exportBtn">导出</button>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">
+                            <div class="settings-icon">📥</div>
+                            <div class="settings-text">
+                                <h4>导入数据</h4>
+                                <p>从备份恢复</p>
+                            </div>
+                        </div>
+                        <button class="export-btn" id="importBtn">导入</button>
+                        <input type="file" id="importFile" accept=".json" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="section-title" style="margin-bottom: 12px;">关于</div>
+                <div class="settings-section">
+                    <div class="settings-item">
+                        <div class="settings-label">
+                            <div class="settings-icon">💡</div>
+                            <div class="settings-text">
+                                <h4>使用提示</h4>
+                                <p>配合iPhone提醒事项获得推送通知</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">
+                            <div class="settings-icon">🌸</div>
+                            <div class="settings-text">
+                                <h4>版本</h4>
+                                <p>锵锵锵锵的小世界 v2.0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Chat Input -->
+        <div class="chat-input-area" id="chatInputArea">
+            <div class="chat-input-wrapper">
+                <textarea class="chat-input" id="chatInput" placeholder="记录任务，或告诉我：开始了/没做/焦虑..." rows="1"></textarea>
+                <button class="send-btn" id="sendBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-page="tasks">
+                <span class="nav-icon">✓</span>
+                <span>任务</span>
+            </button>
+            <button class="nav-item" data-page="snippets">
+                <span class="nav-icon">📌</span>
+                <span>片段</span>
+            </button>
+            <button class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>设置</span>
+            </button>
+        </nav>
+
+        <!-- Add Button -->
+        <button class="add-btn" id="addBtn">+</button>
+
+        <!-- Recognition Popup -->
+        <div class="recognition-popup" id="recognitionPopup">
+            <p class="recognition-text" id="recognitionText"></p>
+            <div class="recognition-actions">
+                <button class="recognition-btn secondary" id="recognitionCancel">只是记录</button>
+                <button class="recognition-btn primary" id="recognitionConfirm">创建任务</button>
+            </div>
+        </div>
+
+        <!-- Progress Dialog -->
+        <div class="progress-dialog" id="progressDialog">
+            <div class="progress-card">
+                <div class="progress-emoji">🌷</div>
+                <p class="progress-question" id="progressQuestion"></p>
+                <p class="progress-task-name" id="progressTaskName"></p>
+                <div class="progress-buttons">
+                    <button class="progress-btn no" id="progressNo">还没呢</button>
+                    <button class="progress-btn yes" id="progressYes">在做了！</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Modal -->
+        <div class="modal-overlay" id="taskModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title">完善任务</h3>
+                    <button class="modal-close" id="closeTaskModal">✕</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">任务内容</label>
+                    <input type="text" class="form-input" id="taskTitleInput" placeholder="做什么...">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">截止日期</label>
+                        <input type="date" class="form-input" id="taskDateInput">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">时间</label>
+                        <input type="time" class="form-input" id="taskTimeInput">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">优先级</label>
+                    <div class="priority-select">
+                        <div class="priority-option" data-priority="low">低</div>
+                        <div class="priority-option selected" data-priority="medium">中</div>
+                        <div class="priority-option" data-priority="high">高</div>
+                    </div>
+                </div>
+                <button class="form-submit" id="saveTaskBtn">保存任务</button>
+            </div>
+        </div>
+
+        <!-- Snippet Modal -->
+        <div class="modal-overlay" id="snippetModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="snippetModalTitle">添加片段</h3>
+                    <button class="modal-close" id="closeSnippetModal">✕</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">标题</label>
+                    <input type="text" class="form-input" id="snippetTitleInput" placeholder="给片段起个名字...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">内容</label>
+                    <textarea class="form-input form-textarea" id="snippetContentInput" placeholder="片段内容..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">分类</label>
+                    <select class="form-input" id="snippetCategorySelect">
+                        <option value="academic">📚 学术相关</option>
+                        <option value="ai">🤖 AI指令</option>
+                        <option value="account">🔐 账号信息</option>
+                        <option value="template">📋 模板</option>
+                        <option value="other">💬 其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">标签（空格分隔）</label>
+                    <input type="text" class="form-input" id="snippetTagsInput" placeholder="例如：论文 重要">
+                </div>
+                <button class="form-submit" id="saveSnippetBtn">保存</button>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
+
+        <!-- Reminder Sync Modal -->
+        <div class="modal-overlay" id="reminderModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title">📱 同步到提醒事项</h3>
+                    <button class="modal-close" id="closeReminderModal">✕</button>
+                </div>
+                <div class="reminder-intro">
+                    <p>我帮你算好了提醒时间，复制后去iPhone「提醒事项」粘贴就行~</p>
+                </div>
+                <div class="reminder-schedule" id="reminderSchedule"></div>
+                <div class="reminder-actions">
+                    <button class="form-submit" id="copyAllReminders">📋 一键复制全部</button>
+                    <button class="reminder-skip" id="skipReminder">先不设置</button>
+                </div>
+                <div class="reminder-tip" id="reminderTip">
+                    <span class="tip-icon">👆</span>
+                    <span>复制后，<strong>现在就去</strong>「提醒事项」App 新建提醒并粘贴哦！</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== State ====================
+        let tasks = JSON.parse(localStorage.getItem('qqqq_tasks')) || [];
+        let snippets = JSON.parse(localStorage.getItem('qqqq_snippets')) || [];
+        let appState = JSON.parse(localStorage.getItem('qqqq_state')) || {
+            lastVisit: null,
+            lastProgressCheck: null,
+            progressResponses: {}
+        };
+        let currentCategory = 'all';
+        let currentTab = 'pending';
+        let editingSnippetId = null;
+        let pendingTaskText = '';
+
+        // ==================== Smart Reply System ====================
+        
+        // 时间感知
+        function getTimeContext() {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 9) return { period: 'earlyMorning', label: '一大早' };
+            if (hour >= 9 && hour < 12) return { period: 'morning', label: '上午' };
+            if (hour >= 12 && hour < 14) return { period: 'noon', label: '中午' };
+            if (hour >= 14 && hour < 18) return { period: 'afternoon', label: '下午' };
+            if (hour >= 18 && hour < 22) return { period: 'evening', label: '晚上' };
+            return { period: 'lateNight', label: '这么晚' };
+        }
+
+        // 意图识别关键词 - 研究生日常表达
+        const intentPatterns = {
+            started: ['开始做了', '开始了', '在做了', '做起来了', '动手了', '开工了', '开干', '干起来', '开始干', '要开始', '准备开始', '马上开始', '这就去', '去做了', '冲了', '干活去', '动起来了', '着手', '入手了'],
+            progress: [
+                // 通用进度
+                '做了一点', '做了一些', '有进展', '推进了', '写了一点', '做到', '完成了一部分', '弄了一些', '搞了一些',
+                // 研究相关
+                '找到了', '找好了', '收集到', '收集好', '整理好', '整理完', '下载好', '下载完',
+                '在跑', '跑了', '跑起来', '在运行', '运行了', '在算', '算了', 
+                '在写', '写到', '写了', '改了', '改到', '修了',
+                '在看', '看了', '看完', '读了', '读到', '读完',
+                '在调', '调了', '调好', '调完', '在试', '试了',
+                '准备跑', '准备写', '准备做', '准备交',
+                '弄好了', '搞好了', '处理好', '处理完',
+                '差不多', '快好了', '快完了', '快写完', '快做完',
+                '还在', '继续', '接着',
+                // 数据/实验相关
+                '数据', '实验', '代码', '模型', '结果', '图表', '论文'
+            ],
+            done: ['做完了', '完成了', '搞定了', '交了', '结束了', 'done', '终于做完', '弄完了', '写完了', '全部完成', '跑完了', '算完了', '出结果了', '通过了', '过了'],
+            notDone: ['没做', '没开始', '还没', '一点没动', '没动', '没写', '啥也没干', '什么都没做', '一直没', '还是没', '没弄', '没搞', '没跑', '没看'],
+            anxious: ['焦虑', '好慌', '害怕', '压力', '紧张', '崩溃', '受不了', '烦躁', '烦死', '不安', '心慌', '慌了', '急死', '着急', '担心', '怕来不及', '来不及', '赶不上', '完蛋'],
+            dontWant: ['不想做', '想放弃', '做不下去', '太难', '想逃', '想摆烂', '摆了', '算了', '不想干', '想躺平', '好累', '累死', '不行了', '坚持不下去', '不想写', '写不下去', '卡住', '卡了'],
+            needHelp: ['鼓励我', '打气', '加油', '帮帮我', '怎么办', '救命', '推我一把', '骂我', '批评我', '说说我', '夸我', '表扬我']
+        };
+
+        // 检测意图
+        function detectIntent(text) {
+            const t = text.toLowerCase();
+            for (const [intent, keywords] of Object.entries(intentPatterns)) {
+                if (keywords.some(kw => t.includes(kw))) {
+                    return intent;
+                }
+            }
+            return null;
+        }
+
+        // 超大话语库 - 每种场景独立的完整句子
+        const responses = {
+            started: [
+                "好！冲！说做就做，这就是你！",
+                "太好了，行动派上线！去吧，我等你的好消息~",
+                "出发！你已经比昨天的自己更勇敢了",
+                "nice！开始了就是成功的一半，加油！",
+                "好的好的，快去快去！做完了记得回来告诉我~",
+                "就是现在！相信自己，你可以的",
+                "这就对了！别想太多，先做起来！",
+                "勇敢！就喜欢你这样说干就干的样子",
+                "收到！那我就在这里给你加油啦，冲冲冲！",
+                "好！去吧去吧，遇到困难随时回来找我",
+                "太棒了，动起来的感觉是不是还不错？",
+                "yes！这才是你呀，行动力满满！",
+                "好的，那你专心去做，我在这里等你~",
+                "出击！今天的你超级厉害！",
+                "这就去做了？我就知道你可以的！",
+                "好！记住，不用完美，做了就是胜利",
+                "冲呀！做一点是一点，别给自己太大压力",
+                "好好好，快去！期待你做完回来报喜~",
+                "真棒！迈出第一步是最难的，你做到了",
+                "就是这种状态！保持住，你很厉害！"
+            ],
+            progress: [
+                "有进展就很棒啊！继续保持~",
+                "做了一点也是进步！一点一点来，不急",
+                "很好很好，在推进就对了！",
+                "慢慢来，你做得很好，别停下~",
+                "每一小步都是进步！继续！",
+                "在动就好！比原地焦虑强一百倍",
+                "不错不错，保持这个节奏~",
+                "有进展诶！你看，做起来其实没那么难对吧",
+                "很好！做了就比没做强，继续推进吧",
+                "一点一点来，你已经在路上了~",
+                "这样很好！别贪多，稳步推进就行",
+                "有动静就好！加油，继续~",
+                "真不错，在往前走就对了！",
+                "慢一点没关系，重要的是在做~",
+                "进度+1！你很棒，继续保持这个状态"
+            ],
+            done: [
+                "太厉害了！！恭喜完成！给自己放个烟花吧🎉",
+                "搞定了？！太棒了！你超级厉害！",
+                "哇！完成了！我就知道你可以的！",
+                "恭喜恭喜！终于搞定了，好好休息一下吧~",
+                "耶！任务完成！你真的太厉害了！",
+                "做完了！！！撒花！你是最棒的！",
+                "完成了？！快让我看看这个厉害的人！",
+                "wow！你做到了！我好为你骄傲！",
+                "结束了！辛苦了，你真的很努力！",
+                "太强了！完成的感觉是不是超爽？",
+                "恭喜！完成比完美更重要，你做到了！",
+                "搞定！今天的你超级棒，奖励自己一下吧~",
+                "哇塞完成了！你看你，说能行就真的行！",
+                "好厉害！完成了就彻底放松一下吧，你值得！",
+                "做完了！世界上又少了一件让你焦虑的事~"
+            ],
+            notDone: [
+                "没做也没关系，现在开始就是最好的时机~",
+                "没开始？那就从现在开始吧，就现在",
+                "好，没做。那下一秒可以开始吗？试试看~",
+                "一点没动？没事，先打开文档，就打开而已",
+                "没做完不要紧，关键是要开始呀~",
+                "还没开始的话...不如先做最简单的那一步？",
+                "没做也没关系啦，但是...一直不做会更焦虑哦",
+                "ok没做，那现在呢？要不试着做5分钟？",
+                "没动？深呼吸，然后打开它，就打开就好",
+                "还没开始也行，但别拖太久呀~",
+                "没写？那就现在写第一个字？试试？",
+                "啥也没干？好吧...那接下来呢？要动起来啦",
+                "一直没做？没关系，从这一刻开始就好",
+                "没开始呀...那要不要现在一起开始？我陪你",
+                "还没做？时间在走哦~要不先做一点点？"
+            ],
+            anxious: [
+                "焦虑很正常，说明你在乎。但焦虑解决不了问题，行动可以~",
+                "我懂，焦虑的时候脑子一团乱。但相信我，做起来就会好很多",
+                "慌也没用的呀~深呼吸，然后做一件最小的事情开始",
+                "焦虑是因为想太多做太少。反过来试试？做多一点想少一点",
+                "别慌别慌，越慌越乱。先稳住，然后做一件事，就一件",
+                "压力大的时候，把大任务拆成小块，一块一块来~",
+                "我知道你很急，但是越急越容易出错。慢下来，稳住",
+                "焦虑说明你是个负责任的人，但现在需要的是行动而不是担心",
+                "害怕来不及？那就现在开始呀，每一秒都在倒计时哦",
+                "紧张的话...试试先做10分钟？做完可能就不紧张了",
+                "压力大就先做压力最小的那部分，慢慢来~",
+                "心慌的时候，就做眼前最简单的一步，别想太远",
+                "焦虑≠解决问题。把焦虑的时间用来做事，会好很多~",
+                "受不了？那就对了，说明该行动了。去做吧！",
+                "我理解你的焦虑，但唯一的解药就是：开始做"
+            ],
+            dontWant: [
+                "不想做也得做呀...世界上哪有那么多想做的事",
+                "累了就休息一会儿，但休息完了要继续哦~",
+                "想放弃？先别，再坚持一下下，说不定就过去了",
+                "做不下去？那休息10分钟，然后回来继续！",
+                "太难了是吧...把它分成小块，一块一块啃",
+                "想躺平？躺一会儿可以，但别躺太久~",
+                "好累我懂，但做完才能真正轻松呀",
+                "不想干也正常，但拖着会更不想干，趁现在还有点动力？",
+                "想摆烂？不行！你比你想象的更能坚持！",
+                "坚持不下去？那就降低标准，先完成再说完美",
+                "想逃？逃不掉的呀...不如面对它，干掉它",
+                "我知道很难，但你已经走了这么远了，别放弃",
+                "不行了？休息一下，喝口水，然后继续。你可以的",
+                "想放弃很正常，但放弃之后呢？还是得做吧？",
+                "太难的话，先做最简单的那1%，剩下的再说"
+            ],
+            needHelp: [
+                "你很棒，你可以的，你比自己想象的更厉害！去做吧！",
+                "来，我推你一把：现在立刻马上去做！不要想了！",
+                "加油加油加油！你是最棒的！冲！",
+                "好，我来骂你：还不去做？磨蹭什么呢！快去！",
+                "我相信你！你一定可以的！现在就去证明给自己看！",
+                "打气时间到：你很厉害，这点事难不倒你的！",
+                "怎么办？做就对了！想太多没用的，冲就完事了！",
+                "我来推你：关掉这个对话，去做你该做的事！现在！",
+                "你需要的不是鼓励，是行动。去吧，做完再来找我！",
+                "救命？我来救你：停止焦虑，开始做！这就是方法！",
+                "好，批评你：拖延这么久了，再不做就真的来不及了！",
+                "加油！你能行的！我在这里给你打call！",
+                "说真的，你已经很努力了，再坚持一下就好了！",
+                "我对你有信心！你肯定可以搞定的！去吧！",
+                "别怕！做错了也比不做强！冲就对了！"
+            ]
+        };
+
+        // 时间相关的开头（可选添加）
+        const timeOpeners = {
+            earlyMorning: ["一大早就在努力！", "早起的你真棒！", "这么早就开始啦？"],
+            morning: ["上午好呀~", ""],
+            noon: ["中午了，", "午饭吃了吗？"],
+            afternoon: ["下午啦~", ""],
+            evening: ["晚上了，", "辛苦一天了，"],
+            lateNight: ["这么晚还在忙？", "夜深了，", "注意休息哦，"]
+        };
+
+        // 获取随机回复
+        function getResponse(intent, taskName) {
+            const pool = responses[intent];
+            if (!pool || pool.length === 0) return null;
+            
+            let response = pool[Math.floor(Math.random() * pool.length)];
+            
+            // 20%概率加时间开头
+            const timeCtx = getTimeContext();
+            if (Math.random() < 0.2 && timeOpeners[timeCtx.period]) {
+                const openers = timeOpeners[timeCtx.period].filter(o => o);
+                if (openers.length > 0) {
+                    response = openers[Math.floor(Math.random() * openers.length)] + response;
+                }
+            }
+            
+            return response;
+        }
+
+        // 基础鼓励（无特定意图时）
+        const generalEncouragements = [
+            "有什么想说的，随时告诉我~",
+            "我在这里陪着你~",
+            "加油，你可以的！",
+            "慢慢来，不急~"
+        ];
+
+        function randomPick(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Track anxiety reports to escalate response
+        let anxietyCount = parseInt(localStorage.getItem('qqqq_anxiety_count') || '0');
+
+        // ==================== Priority Algorithm ====================
+        function calculateTaskScore(task) {
+            if (task.completed) return -1000;
+            
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            let score = 0;
+
+            // Deadline urgency
+            if (task.date) {
+                const deadline = new Date(task.date);
+                const daysLeft = Math.floor((deadline - today) / (1000 * 60 * 60 * 24));
+                
+                if (daysLeft < 0) score += 500; // Overdue
+                else if (daysLeft === 0) score += 400; // Today
+                else if (daysLeft === 1) score += 300; // Tomorrow
+                else if (daysLeft <= 3) score += 200; // Within 3 days
+                else if (daysLeft <= 7) score += 100; // Within a week
+            }
+
+            // User priority
+            if (task.priority === 'high') score += 150;
+            else if (task.priority === 'medium') score += 50;
+            else if (task.priority === 'low') score += 10;
+
+            // Not started tasks get slight boost
+            if (!task.started) score += 20;
+
+            return score;
+        }
+
+        function getTopTask() {
+            const pending = tasks.filter(t => !t.completed);
+            if (pending.length === 0) return null;
+            
+            pending.sort((a, b) => calculateTaskScore(b) - calculateTaskScore(a));
+            return pending[0];
+        }
+
+        function getTaskUrgencyLabel(task) {
+            if (!task.date) return { text: '无截止日期', class: '' };
+            
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const deadline = new Date(task.date);
+            const daysLeft = Math.floor((deadline - today) / (1000 * 60 * 60 * 24));
+
+            if (daysLeft < 0) return { text: `已过期${-daysLeft}天`, class: 'urgent' };
+            if (daysLeft === 0) return { text: '今天截止', class: 'urgent' };
+            if (daysLeft === 1) return { text: '明天截止', class: 'soon' };
+            if (daysLeft <= 3) return { text: `还剩${daysLeft}天`, class: 'soon' };
+            return { text: `还剩${daysLeft}天`, class: '' };
+        }
+
+        // ==================== Reminder Frequency ====================
+        function shouldShowReminder() {
+            const topTask = getTopTask();
+            if (!topTask || !topTask.date) return false;
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const deadline = new Date(topTask.date);
+            const daysLeft = Math.floor((deadline - today) / (1000 * 60 * 60 * 24));
+
+            const lastCheck = appState.lastProgressCheck ? new Date(appState.lastProgressCheck) : null;
+            const hoursSinceCheck = lastCheck ? (now - lastCheck) / (1000 * 60 * 60) : 999;
+
+            // Frequency based on urgency
+            if (daysLeft <= 1) return hoursSinceCheck >= 3; // Every 3 hours
+            if (daysLeft <= 3) return hoursSinceCheck >= 6; // Every 6 hours
+            if (daysLeft <= 7) return hoursSinceCheck >= 12; // Twice a day
+            return hoursSinceCheck >= 24; // Once a day
+        }
+
+        // ==================== DOM Elements ====================
+        const $ = id => document.getElementById(id);
+
+        // ==================== Theme ====================
+        const savedTheme = localStorage.getItem('qqqq_theme') || 'light';
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            $('themeToggle').textContent = '🌙';
+            $('darkModeToggle').classList.add('active');
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+                $('themeToggle').textContent = '☀️';
+                $('darkModeToggle').classList.remove('active');
+                localStorage.setItem('qqqq_theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                $('themeToggle').textContent = '🌙';
+                $('darkModeToggle').classList.add('active');
+                localStorage.setItem('qqqq_theme', 'dark');
+            }
+        }
+
+        $('themeToggle').onclick = toggleTheme;
+        $('darkModeToggle').onclick = toggleTheme;
+
+        // ==================== Navigation ====================
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.onclick = () => {
+                const page = item.dataset.page;
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                $(`${page}Page`).classList.add('active');
+
+                if (page === 'snippets') {
+                    $('chatInputArea').style.display = 'none';
+                    $('addBtn').classList.add('visible');
+                } else if (page === 'settings') {
+                    $('chatInputArea').style.display = 'none';
+                    $('addBtn').classList.remove('visible');
+                } else {
+                    $('chatInputArea').style.display = 'block';
+                    $('addBtn').classList.remove('visible');
+                }
+            };
+        });
+
+        // Task Tabs
+        document.querySelectorAll('.task-tab').forEach(tab => {
+            tab.onclick = () => {
+                document.querySelectorAll('.task-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                
+                $('pendingSection').style.display = currentTab === 'pending' ? 'block' : 'none';
+                $('completedSection').style.display = currentTab === 'completed' ? 'block' : 'none';
+            };
+        });
+
+        // ==================== Input Handling ====================
+        const chatInput = $('chatInput');
+        chatInput.oninput = function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        };
+
+        const timePatterns = [
+            { regex: /今天|今日/i, days: 0 },
+            { regex: /明天|明日/i, days: 1 },
+            { regex: /后天/i, days: 2 },
+            { regex: /大后天/i, days: 3 },
+            { regex: /下周|下星期/i, days: 7 },
+            { regex: /(\d{1,2})[月\-\/](\d{1,2})[日号]?/i, type: 'date' },
+            { regex: /(\d{1,2})[点时:](\d{0,2})/i, type: 'time' },
+        ];
+
+        const taskKeywords = ['记得', '要', '需要', '必须', '提醒', '别忘', '截止', 'deadline', '交', '完成', '做', '去', '买', '开会', '组会', '汇报', '答辩', '面试', '周'];
+
+        function recognizeInput(text) {
+            const looksLikeTask = taskKeywords.some(kw => text.includes(kw));
+            let recognizedDate = null;
+            let recognizedTime = null;
+            let hints = [];
+
+            for (const pattern of timePatterns) {
+                const match = text.match(pattern.regex);
+                if (match) {
+                    if (pattern.days !== undefined) {
+                        const date = new Date();
+                        date.setDate(date.getDate() + pattern.days);
+                        recognizedDate = date.toISOString().split('T')[0];
+                        hints.push(match[0]);
+                    } else if (pattern.type === 'date') {
+                        const now = new Date();
+                        const month = parseInt(match[1]) - 1;
+                        const day = parseInt(match[2]);
+                        const year = month < now.getMonth() ? now.getFullYear() + 1 : now.getFullYear();
+                        recognizedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                        hints.push(match[0]);
+                    } else if (pattern.type === 'time') {
+                        let hour = parseInt(match[1]);
+                        const minute = match[2] ? parseInt(match[2]) : 0;
+                        if (text.match(/下午|晚上/) && hour < 12) hour += 12;
+                        recognizedTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                        hints.push(match[0]);
+                    }
+                }
+            }
+
+            return {
+                isTask: looksLikeTask || recognizedDate || recognizedTime,
+                date: recognizedDate,
+                time: recognizedTime,
+                hints: hints.length > 0 ? `检测到 ${hints.join('、')}` : null
+            };
+        }
+
+        function handleSend() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            // 首先检测是否是汇报类意图
+            const intent = detectIntent(text);
+            
+            if (intent) {
+                // 是汇报，给出回应
+                const topTask = getTopTask();
+                const taskName = topTask ? topTask.text : null;
+                const response = getResponse(intent, taskName);
+                
+                // 根据意图类型决定反馈样式
+                let feedbackClass = 'feedback-message active';
+                if (intent === 'done') {
+                    feedbackClass = 'feedback-message active'; // 庆祝
+                    if (topTask) {
+                        toggleTask(topTask.id); // 自动完成任务
+                    }
+                } else if (intent === 'started' || intent === 'progress') {
+                    feedbackClass = 'feedback-message active';
+                    if (topTask && intent === 'started') {
+                        markTaskStarted(topTask.id);
+                    }
+                    anxietyCount = 0;
+                    localStorage.setItem('qqqq_anxiety_count', '0');
+                } else if (intent === 'notDone' || intent === 'anxious' || intent === 'dontWant') {
+                    feedbackClass = 'feedback-message gentle active';
+                    anxietyCount++;
+                    localStorage.setItem('qqqq_anxiety_count', anxietyCount.toString());
+                } else if (intent === 'needHelp') {
+                    feedbackClass = 'feedback-message active';
+                }
+                
+                $('feedbackMessage').className = feedbackClass;
+                $('feedbackText').textContent = response;
+                
+                // 根据内容长度调整显示时间
+                const displayTime = Math.max(4000, response.length * 100);
+                setTimeout(() => $('feedbackMessage').classList.remove('active'), displayTime);
+                
+                chatInput.value = '';
+                chatInput.style.height = 'auto';
+                return;
+            }
+
+            // 不是汇报，检查是否是任务
+            const rec = recognizeInput(text);
+            
+            if (rec.isTask) {
+                pendingTaskText = text;
+                let msg = '这看起来是个任务~';
+                if (rec.hints) msg += `<br><strong>${rec.hints}</strong>`;
+                $('recognitionText').innerHTML = msg;
+                
+                $('taskTitleInput').value = text;
+                if (rec.date) $('taskDateInput').value = rec.date;
+                if (rec.time) $('taskTimeInput').value = rec.time;
+                
+                $('recognitionPopup').classList.add('active');
+            } else {
+                addTask(text, null, null, 'medium');
+                showToast('已记录 ✓');
+            }
+            
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+        }
+
+        $('sendBtn').onclick = handleSend;
+        chatInput.onkeydown = e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        };
+
+        $('recognitionConfirm').onclick = () => {
+            $('recognitionPopup').classList.remove('active');
+            $('taskModal').classList.add('active');
+        };
+
+        $('recognitionCancel').onclick = () => {
+            $('recognitionPopup').classList.remove('active');
+            addTask(pendingTaskText, null, null, 'medium');
+            showToast('已记录 ✓');
+        };
+
+        // ==================== Task CRUD ====================
+        function addTask(text, date, time, priority) {
+            const task = {
+                id: Date.now(),
+                text,
+                date,
+                time,
+                priority,
+                completed: false,
+                started: false,
+                createdAt: new Date().toISOString()
+            };
+            tasks.unshift(task);
+            saveTasks();
+            renderTasks();
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                if (task.completed) {
+                    task.completedAt = new Date().toISOString();
+                }
+                saveTasks();
+                renderTasks();
+                if (task.completed) {
+                    showToast('完成了！你真棒~ 🎉');
+                }
+            }
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
+            renderTasks();
+            showToast('已删除');
+        }
+
+        function markTaskStarted(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.started = true;
+                saveTasks();
+            }
+        }
+
+        function saveTasks() {
+            localStorage.setItem('qqqq_tasks', JSON.stringify(tasks));
+        }
+
+        // ==================== Reminder Schedule Generator ====================
+        function generateReminderSchedule(taskText, deadlineDate) {
+            if (!deadlineDate) return null;
+            
+            const deadline = new Date(deadlineDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            deadline.setHours(0, 0, 0, 0);
+            
+            const daysLeft = Math.floor((deadline - today) / (1000 * 60 * 60 * 24));
+            if (daysLeft < 0) return null; // 已过期
+            
+            const reminders = [];
+            const formatDate = (d) => `${d.getMonth() + 1}月${d.getDate()}日`;
+            
+            if (daysLeft === 0) {
+                // 今天截止：提醒3次
+                reminders.push({ date: formatDate(today), times: ['9:00', '14:00', '18:00'], label: '今天截止！' });
+            } else if (daysLeft === 1) {
+                // 明天截止
+                reminders.push({ date: formatDate(today), times: ['9:00', '20:00'], label: '还剩1天' });
+                const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+                reminders.push({ date: formatDate(tomorrow), times: ['9:00', '12:00', '17:00'], label: '今天截止！' });
+            } else if (daysLeft <= 3) {
+                // 2-3天：每天2次
+                for (let i = 0; i <= daysLeft; i++) {
+                    const d = new Date(today); d.setDate(d.getDate() + i);
+                    const left = daysLeft - i;
+                    if (left === 0) {
+                        reminders.push({ date: formatDate(d), times: ['9:00', '14:00', '18:00'], label: '今天截止！' });
+                    } else {
+                        reminders.push({ date: formatDate(d), times: ['9:00', '20:00'], label: `还剩${left}天` });
+                    }
+                }
+            } else if (daysLeft <= 7) {
+                // 4-7天：前几天每天1次，后3天每天2次
+                for (let i = 0; i <= daysLeft; i++) {
+                    const d = new Date(today); d.setDate(d.getDate() + i);
+                    const left = daysLeft - i;
+                    if (left === 0) {
+                        reminders.push({ date: formatDate(d), times: ['9:00', '14:00', '18:00'], label: '今天截止！' });
+                    } else if (left <= 2) {
+                        reminders.push({ date: formatDate(d), times: ['9:00', '20:00'], label: `还剩${left}天` });
+                    } else {
+                        reminders.push({ date: formatDate(d), times: ['9:00'], label: `还剩${left}天` });
+                    }
+                }
+            } else {
+                // 超过7天：每2天提醒一次，最后3天加密
+                for (let i = 0; i <= daysLeft; i++) {
+                    const d = new Date(today); d.setDate(d.getDate() + i);
+                    const left = daysLeft - i;
+                    if (left === 0) {
+                        reminders.push({ date: formatDate(d), times: ['9:00', '14:00', '18:00'], label: '今天截止！' });
+                    } else if (left <= 2) {
+                        reminders.push({ date: formatDate(d), times: ['9:00', '20:00'], label: `还剩${left}天` });
+                    } else if (left <= 5) {
+                        reminders.push({ date: formatDate(d), times: ['9:00'], label: `还剩${left}天` });
+                    } else if (i % 2 === 0) {
+                        reminders.push({ date: formatDate(d), times: ['9:00'], label: `还剩${left}天` });
+                    }
+                }
+            }
+            
+            return { taskText, reminders };
+        }
+
+        function formatRemindersForCopy(schedule) {
+            if (!schedule) return '';
+            
+            let text = `📌 任务：${schedule.taskText}\n\n`;
+            text += `⏰ 提醒时间表：\n`;
+            
+            schedule.reminders.forEach(r => {
+                text += `\n${r.date}（${r.label}）\n`;
+                r.times.forEach(t => {
+                    text += `  · ${t} 提醒\n`;
+                });
+            });
+            
+            text += `\n💡 复制每条到「提醒事项」设置对应时间`;
+            return text;
+        }
+
+        function showReminderModal(taskText, deadlineDate) {
+            const schedule = generateReminderSchedule(taskText, deadlineDate);
+            if (!schedule || schedule.reminders.length === 0) return;
+            
+            // 渲染时间表
+            let html = '';
+            schedule.reminders.forEach(r => {
+                html += `
+                    <div class="reminder-item">
+                        <span class="reminder-date">${r.date}</span>
+                        <span class="reminder-times">${r.label} → ${r.times.join('、')}</span>
+                    </div>
+                `;
+            });
+            
+            // 添加复制预览
+            const copyText = formatRemindersForCopy(schedule);
+            html += `<div class="reminder-text-preview">${escapeHtml(copyText)}</div>`;
+            
+            $('reminderSchedule').innerHTML = html;
+            $('reminderSchedule').dataset.copyText = copyText;
+            $('reminderTip').classList.remove('active');
+            $('copyAllReminders').textContent = '📋 一键复制全部';
+            $('copyAllReminders').style.background = '';
+            $('reminderModal').classList.add('active');
+        }
+
+        $('copyAllReminders').onclick = () => {
+            const text = $('reminderSchedule').dataset.copyText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('已复制！');
+                $('reminderTip').classList.add('active');
+                $('copyAllReminders').textContent = '✅ 已复制';
+                $('copyAllReminders').style.background = 'var(--success)';
+            });
+        };
+
+        $('closeReminderModal').onclick = () => $('reminderModal').classList.remove('active');
+        $('skipReminder').onclick = () => $('reminderModal').classList.remove('active');
+
+        function saveState() {
+            localStorage.setItem('qqqq_state', JSON.stringify(appState));
+        }
+
+        // ==================== Render Tasks ====================
+        function renderTasks() {
+            const pending = tasks.filter(t => !t.completed);
+            const completed = tasks.filter(t => t.completed);
+
+            // Sort pending by score
+            pending.sort((a, b) => calculateTaskScore(b) - calculateTaskScore(a));
+            // Sort completed by completion time
+            completed.sort((a, b) => new Date(b.completedAt || 0) - new Date(a.completedAt || 0));
+
+            $('pendingCount').textContent = pending.length;
+            $('completedCount').textContent = completed.length;
+
+            // Render lists
+            $('pendingTaskList').innerHTML = pending.map((t, i) => createTaskHTML(t, i + 1)).join('');
+            $('completedTaskList').innerHTML = completed.map(t => createTaskHTML(t)).join('');
+
+            // Empty states
+            $('emptyPending').style.display = pending.length === 0 ? 'block' : 'none';
+            $('emptyCompleted').style.display = completed.length === 0 ? 'block' : 'none';
+
+            // Priority card
+            const topTask = getTopTask();
+            if (topTask) {
+                $('priorityCard').style.display = 'block';
+                $('encouragement').style.display = 'none';
+                $('priorityTaskText').textContent = topTask.text;
+                
+                const urgency = getTaskUrgencyLabel(topTask);
+                const priorityLabels = { high: '高优先级', medium: '', low: '' };
+                let metaText = urgency.text;
+                if (priorityLabels[topTask.priority]) {
+                    metaText += ` · ${priorityLabels[topTask.priority]}`;
+                }
+                $('priorityMeta').innerHTML = `<span class="${urgency.class}">${metaText}</span>`;
+                
+                // 状态提示
+                $('priorityStatus').innerHTML = topTask.started 
+                    ? '✅ 已开始 · 在下方告诉我进度吧~' 
+                    : '💬 在下方输入框告诉我：开始了吗？做完了吗？或者...焦虑了？';
+            } else {
+                $('priorityCard').style.display = 'none';
+                $('encouragement').style.display = 'block';
+                $('encouragementText').textContent = "没有待办事项，享受这份轻松吧~";
+            }
+
+            // Update reminder banner
+            updateReminderBanner();
+        }
+
+        function createTaskHTML(task, rank) {
+            const urgency = getTaskUrgencyLabel(task);
+            const timeLabel = task.time || '';
+            
+            return `
+                <div class="task-card ${task.completed ? 'completed' : ''}">
+                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
+                    <div class="task-content">
+                        <div class="task-text">${escapeHtml(task.text)}</div>
+                        <div class="task-meta">
+                            ${!task.completed && rank && rank <= 3 ? `<span class="task-rank">第${rank}优先</span>` : ''}
+                            ${task.date ? `<span class="task-time ${urgency.class}">${urgency.text}${timeLabel ? ' ' + timeLabel : ''}</span>` : ''}
+                        </div>
+                    </div>
+                    <button class="task-delete" onclick="deleteTask(${task.id})">✕</button>
+                </div>
+            `;
+        }
+
+        function updateReminderBanner() {
+            const topTask = getTopTask();
+            if (!topTask) {
+                $('reminderBanner').classList.remove('active');
+                return;
+            }
+
+            const urgency = getTaskUrgencyLabel(topTask);
+            if (urgency.class === 'urgent' || urgency.class === 'soon') {
+                $('reminderBanner').classList.add('active');
+                $('reminderText').textContent = urgency.class === 'urgent' 
+                    ? randomPick(encouragements.urgent)
+                    : randomPick(encouragements.reminder);
+            } else {
+                $('reminderBanner').classList.remove('active');
+            }
+        }
+
+        // ==================== Progress Dialog ====================
+        function showProgressDialog() {
+            const topTask = getTopTask();
+            if (!topTask) return;
+
+            $('progressQuestion').textContent = '这个任务开始了吗？';
+            $('progressTaskName').textContent = topTask.text;
+            $('progressDialog').classList.add('active');
+            $('progressDialog').dataset.taskId = topTask.id;
+
+            appState.lastProgressCheck = new Date().toISOString();
+            saveState();
+        }
+
+        $('progressYes').onclick = () => {
+            const taskId = parseInt($('progressDialog').dataset.taskId);
+            markTaskStarted(taskId);
+            $('progressDialog').classList.remove('active');
+            
+            $('feedbackMessage').className = 'feedback-message active';
+            $('feedbackText').textContent = getResponse('started');
+            
+            setTimeout(() => {
+                $('feedbackMessage').classList.remove('active');
+            }, 5000);
+        };
+
+        $('progressNo').onclick = () => {
+            $('progressDialog').classList.remove('active');
+            
+            $('feedbackMessage').className = 'feedback-message gentle active';
+            $('feedbackText').textContent = getResponse('notDone');
+            
+            setTimeout(() => {
+                $('feedbackMessage').classList.remove('active');
+            }, 6000);
+        };
+
+        // ==================== Task Modal ====================
+        $('closeTaskModal').onclick = () => $('taskModal').classList.remove('active');
+
+        document.querySelectorAll('.priority-option').forEach(opt => {
+            opt.onclick = () => {
+                document.querySelectorAll('.priority-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+            };
+        });
+
+        $('saveTaskBtn').onclick = () => {
+            const text = $('taskTitleInput').value.trim();
+            if (!text) return;
+            
+            const date = $('taskDateInput').value || null;
+            const time = $('taskTimeInput').value || null;
+            const priority = document.querySelector('.priority-option.selected').dataset.priority;
+            
+            addTask(text, date, time, priority);
+            
+            $('taskTitleInput').value = '';
+            $('taskDateInput').value = '';
+            $('taskTimeInput').value = '';
+            document.querySelectorAll('.priority-option').forEach(o => o.classList.remove('selected'));
+            document.querySelector('.priority-option[data-priority="medium"]').classList.add('selected');
+            
+            $('taskModal').classList.remove('active');
+            showToast('任务已添加 ✓');
+            
+            // 如果有截止日期，弹出提醒设置
+            if (date) {
+                setTimeout(() => {
+                    showReminderModal(text, date);
+                }, 500);
+            }
+        };
+
+        // ==================== Snippets ====================
+        function addSnippet(title, content, category, tags) {
+            snippets.unshift({
+                id: Date.now(),
+                title, content, category,
+                tags: tags.filter(t => t),
+                createdAt: new Date().toISOString()
+            });
+            saveSnippets();
+            renderSnippets();
+        }
+
+        function updateSnippet(id, title, content, category, tags) {
+            const s = snippets.find(s => s.id === id);
+            if (s) {
+                s.title = title;
+                s.content = content;
+                s.category = category;
+                s.tags = tags.filter(t => t);
+                saveSnippets();
+                renderSnippets();
+            }
+        }
+
+        function deleteSnippet(id) {
+            snippets = snippets.filter(s => s.id !== id);
+            saveSnippets();
+            renderSnippets();
+            showToast('已删除');
+        }
+
+        function copySnippet(id) {
+            const s = snippets.find(s => s.id === id);
+            if (s) {
+                navigator.clipboard.writeText(s.content).then(() => showToast('已复制 ✓'));
+            }
+        }
+
+        function editSnippet(id) {
+            const s = snippets.find(s => s.id === id);
+            if (s) {
+                editingSnippetId = id;
+                $('snippetModalTitle').textContent = '编辑片段';
+                $('snippetTitleInput').value = s.title;
+                $('snippetContentInput').value = s.content;
+                $('snippetCategorySelect').value = s.category;
+                $('snippetTagsInput').value = s.tags.join(' ');
+                $('snippetModal').classList.add('active');
+            }
+        }
+
+        function saveSnippets() {
+            localStorage.setItem('qqqq_snippets', JSON.stringify(snippets));
+        }
+
+        function renderSnippets() {
+            const search = $('snippetSearch').value.toLowerCase();
+            let filtered = snippets;
+            
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(s => s.category === currentCategory);
+            }
+            if (search) {
+                filtered = filtered.filter(s => 
+                    s.title.toLowerCase().includes(search) ||
+                    s.content.toLowerCase().includes(search) ||
+                    s.tags.some(t => t.toLowerCase().includes(search))
+                );
+            }
+
+            const icons = { academic: '📚', ai: '🤖', account: '🔐', template: '📋', other: '💬' };
+            
+            $('snippetList').innerHTML = filtered.map(s => `
+                <div class="snippet-card">
+                    <div class="snippet-header">
+                        <div class="snippet-title">${icons[s.category]} ${escapeHtml(s.title)}</div>
+                        <div class="snippet-actions">
+                            <button class="snippet-btn copy-btn" onclick="copySnippet(${s.id})">📋</button>
+                            <button class="snippet-btn" onclick="editSnippet(${s.id})">✏️</button>
+                            <button class="snippet-btn delete-btn" onclick="deleteSnippet(${s.id})">🗑</button>
+                        </div>
+                    </div>
+                    <div class="snippet-content">${escapeHtml(s.content)}</div>
+                    ${s.tags.length ? `<div class="snippet-tags">${s.tags.map(t => `<span class="snippet-tag">#${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+                </div>
+            `).join('');
+
+            $('emptySnippets').style.display = filtered.length === 0 ? 'block' : 'none';
+        }
+
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                renderSnippets();
+            };
+        });
+
+        $('snippetSearch').oninput = renderSnippets;
+
+        $('addBtn').onclick = () => {
+            editingSnippetId = null;
+            $('snippetModalTitle').textContent = '添加片段';
+            $('snippetTitleInput').value = '';
+            $('snippetContentInput').value = '';
+            $('snippetCategorySelect').value = 'other';
+            $('snippetTagsInput').value = '';
+            $('snippetModal').classList.add('active');
+        };
+
+        $('closeSnippetModal').onclick = () => $('snippetModal').classList.remove('active');
+
+        $('saveSnippetBtn').onclick = () => {
+            const title = $('snippetTitleInput').value.trim();
+            const content = $('snippetContentInput').value.trim();
+            if (!title || !content) {
+                showToast('请填写标题和内容');
+                return;
+            }
+            
+            const category = $('snippetCategorySelect').value;
+            const tags = $('snippetTagsInput').value.trim().split(/\s+/);
+            
+            if (editingSnippetId) {
+                updateSnippet(editingSnippetId, title, content, category, tags);
+                showToast('已更新 ✓');
+            } else {
+                addSnippet(title, content, category, tags);
+                showToast('已保存 ✓');
+            }
+            
+            $('snippetModal').classList.remove('active');
+        };
+
+        // ==================== Export/Import ====================
+        $('exportBtn').onclick = () => {
+            const data = { tasks, snippets, exportedAt: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `锵锵锵锵的小世界备份_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('导出成功 ✓');
+        };
+
+        $('importBtn').onclick = () => $('importFile').click();
+
+        $('importFile').onchange = e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = event => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    if (data.tasks) { tasks = data.tasks; saveTasks(); }
+                    if (data.snippets) { snippets = data.snippets; saveSnippets(); }
+                    renderTasks();
+                    renderSnippets();
+                    showToast('导入成功 ✓');
+                } catch (err) {
+                    showToast('文件格式错误');
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        };
+
+        // ==================== Utils ====================
+        function showToast(msg) {
+            $('toast').textContent = msg;
+            $('toast').classList.add('active');
+            setTimeout(() => $('toast').classList.remove('active'), 2000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.onclick = e => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            };
+        });
+
+        // ==================== Init ====================
+        renderTasks();
+        renderSnippets();
+
+        // Check if should show progress dialog
+        setTimeout(() => {
+            if (shouldShowReminder() && getTopTask()) {
+                showProgressDialog();
+            }
+        }, 1000);
+
+        // Update state
+        appState.lastVisit = new Date().toISOString();
+        saveState();
+    </script>
+</body>
+</html>
