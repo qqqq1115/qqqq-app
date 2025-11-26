@@ -1,0 +1,22 @@
+{
+    "name": "锵锵锵锵的小世界",
+    "short_name": "锵锵小世界",
+    "description": "帮助研究生管理任务和常用片段的助手App",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#FDF8F6",
+    "theme_color": "#C4908F",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
